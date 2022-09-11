@@ -1,0 +1,235 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Sprite精灵实现Pygame矩形、圆形、精细碰撞 | Yzx's-Blog</title><meta name="keywords" content="Python,Pygame,Code"><meta name="author" content="Alex袁梓轩"><meta name="copyright" content="Alex袁梓轩"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言 如果你有Pygame有一定的基础，并用过Pygame编写过游戏那么你一定有一个烦恼那就是当两个图像碰撞检测时，往往采用的是矩形碰撞检测这样就会导致，两个图案实际上还没有碰到，Pygame就识别为碰到了  而Pygame中的Mask(遮罩)模块就是解决这个问题很好的方法，我们把这种用Mask实现碰撞检测的方法叫做精细碰撞，然而，这种方法实现的 难度稍微有点大 ，而且 代码碎片很多 ，很凌乱">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sprite精灵实现Pygame矩形、圆形、精细碰撞">
+<meta property="og:url" content="https://yzx-blog.tk/2022/08/20/Sprite%E7%B2%BE%E7%81%B5%E5%AE%9E%E7%8E%B0Pygame%E7%9F%A9%E5%BD%A2%E3%80%81%E5%9C%86%E5%BD%A2%E3%80%81%E7%B2%BE%E7%BB%86%E7%A2%B0%E6%92%9E/index.html">
+<meta property="og:site_name" content="Yzx&#39;s-Blog">
+<meta property="og:description" content="前言 如果你有Pygame有一定的基础，并用过Pygame编写过游戏那么你一定有一个烦恼那就是当两个图像碰撞检测时，往往采用的是矩形碰撞检测这样就会导致，两个图案实际上还没有碰到，Pygame就识别为碰到了  而Pygame中的Mask(遮罩)模块就是解决这个问题很好的方法，我们把这种用Mask实现碰撞检测的方法叫做精细碰撞，然而，这种方法实现的 难度稍微有点大 ，而且 代码碎片很多 ，很凌乱">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jihulab.com/ZiXuanYuan/blogpic/-/raw/main/pictures/2022/08/23_22_5_46_016.webp">
+<meta property="article:published_time" content="2022-08-20T10:05:33.000Z">
+<meta property="article:modified_time" content="2022-09-03T05:10:57.205Z">
+<meta property="article:author" content="Alex袁梓轩">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="Pygame">
+<meta property="article:tag" content="Code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jihulab.com/ZiXuanYuan/blogpic/-/raw/main/pictures/2022/08/23_22_5_46_016.webp"><link rel="shortcut icon" href="/img/ico.png"><link rel="canonical" href="https://yzx-blog.tk/2022/08/20/Sprite%E7%B2%BE%E7%81%B5%E5%AE%9E%E7%8E%B0Pygame%E7%9F%A9%E5%BD%A2%E3%80%81%E5%9C%86%E5%BD%A2%E3%80%81%E7%B2%BE%E7%BB%86%E7%A2%B0%E6%92%9E/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Sprite精灵实现Pygame矩形、圆形、精细碰撞',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-09-03 13:10:57'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.gif" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">12</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://jihulab.com/ZiXuanYuan/blogpic/-/raw/main/pictures/2022/08/23_22_5_46_016.webp')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Yzx's-Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Sprite精灵实现Pygame矩形、圆形、精细碰撞</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-08-20T10:05:33.000Z" title="发表于 2022-08-20 18:05:33">2022-08-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-09-03T05:10:57.205Z" title="更新于 2022-09-03 13:10:57">2022-09-03</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Code/">Code</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Code/Python/">Python</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Code/Python/Pygame/">Pygame</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span id="" data-flag-title="Sprite精灵实现Pygame矩形、圆形、精细碰撞"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="twikoo_visitors"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ul>
+<li><p>如果你有Pygame有一定的基础，并用过Pygame编写过游戏那么你一定有一个烦恼那就是当两个图像碰撞检测时，往往采用的是矩形碰撞检测这样就会导致，两个图案实际上还没有碰到，Pygame就识别为碰到了</p>
+</li>
+<li><p>而Pygame中的Mask(遮罩)模块就是解决这个问题很好的方法，我们把这种用Mask实现碰撞检测的方法叫做精细碰撞，然而，这种方法实现的 <strong>难度稍微有点大</strong> ，而且 <strong>代码碎片很多</strong> ，<strong>很凌乱</strong></p>
+</li>
+<li><p>而在Pygame中有这么一个类，专门是为游戏角色而设置的，这个类就是 <strong>Sprite精灵类</strong> ，这个类里面就有帮我们封装好的三种碰撞检测方法：Rect、Circle、Mask，其中Mask就是上面提到的遮罩</p>
+<span id="more"></span>
+
+<h2 id="Sprite精灵类实现精细碰撞"><a href="#Sprite精灵类实现精细碰撞" class="headerlink" title="Sprite精灵类实现精细碰撞"></a>Sprite精灵类实现精细碰撞</h2></li>
+<li><p>创建精灵</p>
+<ul>
+<li><p>这里是创建了一个名为s的类</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">s = pygame.sprite.Sprite()</span><br><span class="line">s.image = pygame.transform.scale(pygame.image.load(<span class="string">&#x27;file.png&#x27;</span>),(width,height))</span><br><span class="line">s.rect = pygame.Rect(x,y,width,height)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>实例：创建两个待碰撞精灵，并为其image和rect属性赋值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">s = pygame.sprite.Sprite()</span><br><span class="line">s.image = pygame.transform.scale(pygame.image.load(<span class="string">&#x27;A.png&#x27;</span>),(<span class="number">350</span>,<span class="number">350</span>))</span><br><span class="line">s.rect = pygame.Rect(<span class="number">300</span>,<span class="number">150</span>,<span class="number">350</span>,<span class="number">350</span>)</span><br><span class="line">    </span><br><span class="line">c = pygame.sprite.Sprite()</span><br><span class="line">c.image = pygame.transform.scale(pygame.image.load(<span class="string">&#x27;B.png&#x27;</span>),(<span class="number">200</span>,<span class="number">200</span>))</span><br><span class="line">c.rect = pygame.Rect(<span class="number">0</span>,<span class="number">0</span>,<span class="number">100</span>,<span class="number">100</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>碰撞检测</p>
+<ul>
+<li><p>矩形碰撞检测<br>sp1、sp2分别是两个Sprite精灵<br>如果返回1为碰撞,0为没有碰撞</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pygame.sprite.collide_rect(sp1,sp2)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>外接圆碰撞检测<br>sp1、sp2分别是两个Sprite精灵<br>如果返回True为碰撞，False为没有碰撞</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pygame.sprite.collide_circle(sp1,sp2)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Mask像素碰撞(精细碰撞)<br>sp1、sp2分别是两个Sprite精灵<br>如果返回None为不碰撞，返回一个元组为碰撞</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pygame.sprite.collide_mask(sp1,sp2)</span><br></pre></td></tr></table></figure>
+
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>在上一篇文章中，我介绍了Mask遮罩，其实，这个Sprite精灵只是对它的封装，当然Sprite可不止只有这个功能，<br>他的原来就是检测两个图案非透明部分有多上像素重叠，所以在物体1和物体2之间的碰撞难免还是会因为两个像素仅仅”接壤”而没有判断碰撞，但对比rect碰撞已经好了很多了</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Pygame演示"><a href="#Pygame演示" class="headerlink" title="Pygame演示"></a>Pygame演示</h2><ul>
+<li><strong>这里是三种方式的对比，可见：外接圆碰撞精度&gt;矩形碰撞&gt;精细碰撞</strong><br><img src="https://jihulab.com/ZiXuanYuan/blogpic/-/raw/main/pictures/2022/08/20_19_20_52_Sprite%E4%BA%8B%E4%BE%8B%E7%A2%B0%E6%92%9E.png" alt="alt 加载失败"></li>
+<li><a target="_blank" rel="noopener" href="https://code.xueersi.com/home/project/detail?lang=code&pid=36709123&version=offline&form=python&langType=python">原链接已开源</a></li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>当然Sprite的功能远不止这些，这其实是pygame的一个游戏角色群的处理类，功能还是有非常之多的</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://yzx-blog.tk">Alex袁梓轩</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://yzx-blog.tk/2022/08/20/Sprite%E7%B2%BE%E7%81%B5%E5%AE%9E%E7%8E%B0Pygame%E7%9F%A9%E5%BD%A2%E3%80%81%E5%9C%86%E5%BD%A2%E3%80%81%E7%B2%BE%E7%BB%86%E7%A2%B0%E6%92%9E/">https://yzx-blog.tk/2022/08/20/Sprite%E7%B2%BE%E7%81%B5%E5%AE%9E%E7%8E%B0Pygame%E7%9F%A9%E5%BD%A2%E3%80%81%E5%9C%86%E5%BD%A2%E3%80%81%E7%B2%BE%E7%BB%86%E7%A2%B0%E6%92%9E/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://yzx-blog.tk" target="_blank">Yzx's-Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Python/">Python</a><a class="post-meta__tags" href="/tags/Pygame/">Pygame</a><a class="post-meta__tags" href="/tags/Code/">Code</a></div><div class="post_share"><div class="social-share" data-image="https://jihulab.com/ZiXuanYuan/blogpic/-/raw/main/pictures/2022/08/23_22_5_46_016.webp" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/08/29/Python%E5%B8%B8%E8%A7%81%E6%8A%A5%E9%94%99%E4%BB%A3%E7%A0%81/"><img class="prev-cover" src="https://jihulab.com/ZiXuanYuan/blogpic/-/raw/main/pictures/2022/08/23_22_5_46_002.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Python常见报错代码</div></div></a></div><div class="next-post pull-right"><a href="/2022/08/19/Pygame%E7%94%A8Mask%E5%AE%9E%E7%8E%B0%E7%B2%BE%E7%BB%86%E7%A2%B0%E6%92%9E/"><img class="next-cover" src="https://jihulab.com/ZiXuanYuan/blogpic/-/raw/main/pictures/2022/08/23_22_5_46_daily_pic.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Pygame用Mask实现精细碰撞</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/08/19/Pygame%E7%94%A8Mask%E5%AE%9E%E7%8E%B0%E7%B2%BE%E7%BB%86%E7%A2%B0%E6%92%9E/" title="Pygame用Mask实现精细碰撞"><img class="cover" src="https://jihulab.com/ZiXuanYuan/blogpic/-/raw/main/pictures/2022/08/23_22_5_46_daily_pic.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-08-19</div><div class="title">Pygame用Mask实现精细碰撞</div></div></a></div><div><a href="/2022/09/03/requests%E8%AF%A6%E8%A7%A3(1)/" title="requests详解(1)"><img class="cover" src="https://jihulab.com/ZiXuanYuan/blogpic/-/raw/main/pictures/2022/09/3_19_27_12_003.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-09-03</div><div class="title">requests详解(1)</div></div></a></div><div><a href="/2022/08/14/%E6%A0%88%E4%B8%8E%E9%98%9F%E5%88%97/" title="栈与队列"><img class="cover" src="https://jihulab.com/ZiXuanYuan/blogpic/-/raw/main/pictures/2022/08/17_16_39_43_tit3.svg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-08-14</div><div class="title">栈与队列</div></div></a></div><div><a href="/2022/08/29/Python%E5%B8%B8%E8%A7%81%E6%8A%A5%E9%94%99%E4%BB%A3%E7%A0%81/" title="Python常见报错代码"><img class="cover" src="https://jihulab.com/ZiXuanYuan/blogpic/-/raw/main/pictures/2022/08/23_22_5_46_002.webp" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-08-29</div><div class="title">Python常见报错代码</div></div></a></div><div><a href="/2022/08/13/Vercel-Github%E6%90%AD%E5%BB%BAHexo%E5%8D%9A%E5%AE%A2/" title="Vercel+Github搭建Hexo博客"><img class="cover" src="https://jihulab.com/ZiXuanYuan/blogpic/-/raw/main/pictures/2022/08/17_16_39_43_tit2.svg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-08-13</div><div class="title">Vercel+Github搭建Hexo博客</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.gif" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Alex袁梓轩</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">12</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zixuanyuan"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">Vercel被DNS污染，换了一个域名</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Sprite%E7%B2%BE%E7%81%B5%E7%B1%BB%E5%AE%9E%E7%8E%B0%E7%B2%BE%E7%BB%86%E7%A2%B0%E6%92%9E"><span class="toc-number">2.</span> <span class="toc-text">Sprite精灵类实现精细碰撞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pygame%E6%BC%94%E7%A4%BA"><span class="toc-number">4.</span> <span class="toc-text">Pygame演示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/09/10/%E5%8D%9A%E5%AE%A2%E5%8F%98%E6%9B%B4%E9%80%9A%E7%9F%A5/" title="博客变更通知">博客变更通知</a><time datetime="2022-09-10T12:48:00.000Z" title="发表于 2022-09-10 20:48:00">2022-09-10</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/09/03/requests%E8%AF%A6%E8%A7%A3(1)/" title="requests详解(1)">requests详解(1)</a><time datetime="2022-09-03T11:15:01.000Z" title="发表于 2022-09-03 19:15:01">2022-09-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/08/29/Python%E5%B8%B8%E8%A7%81%E6%8A%A5%E9%94%99%E4%BB%A3%E7%A0%81/" title="Python常见报错代码">Python常见报错代码</a><time datetime="2022-08-29T11:42:28.000Z" title="发表于 2022-08-29 19:42:28">2022-08-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/08/20/Sprite%E7%B2%BE%E7%81%B5%E5%AE%9E%E7%8E%B0Pygame%E7%9F%A9%E5%BD%A2%E3%80%81%E5%9C%86%E5%BD%A2%E3%80%81%E7%B2%BE%E7%BB%86%E7%A2%B0%E6%92%9E/" title="Sprite精灵实现Pygame矩形、圆形、精细碰撞">Sprite精灵实现Pygame矩形、圆形、精细碰撞</a><time datetime="2022-08-20T10:05:33.000Z" title="发表于 2022-08-20 18:05:33">2022-08-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/08/19/Pygame%E7%94%A8Mask%E5%AE%9E%E7%8E%B0%E7%B2%BE%E7%BB%86%E7%A2%B0%E6%92%9E/" title="Pygame用Mask实现精细碰撞">Pygame用Mask实现精细碰撞</a><time datetime="2022-08-19T10:22:16.000Z" title="发表于 2022-08-19 18:22:16">2022-08-19</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 By Alex袁梓轩</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>(()=>{
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://yzx-blogcomment.tk/',
+      region: 'ap-shanghai',
+      onCommentLoaded: function () {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+  }
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://yzx-blogcomment.tk/',
+      region: 'ap-shanghai',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(function (res) {
+      countELement.innerText = res[0].count
+    }).catch(function (err) {
+      console.error(err);
+    });
+  }
+
+  const runFn = () => {
+    init()
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') {
+      setTimeout(runFn,0)
+      return
+    } 
+    getScript('https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js').then(runFn)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = () => {
+      loadTwikoo()
+    }
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
